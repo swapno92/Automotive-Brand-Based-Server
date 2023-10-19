@@ -29,12 +29,21 @@ async function run() {
     await client.connect();
     const database = client.db("brandShopBD");
     const brandsCollection = database.collection("brands");
+    const productsCollection = database.collection("products");
+
 
     app.get("/brands", async (req, res) => {
       const brands = brandsCollection.find();
       const result = await brands.toArray();
       res.send(result);
     });
+
+   app.get("/products/:name", async (req, res) => {
+     const name = req.params.name.replace(" ", "-");
+     const cursor = productsCollection.find({ brand: name });
+     const result = await cursor.toArray();
+     res.send(result);
+   });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
