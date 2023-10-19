@@ -10,7 +10,7 @@ app.use(express.json());
 // brandShop
 // uCrXXy8bZBVdeCYx
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   "mongodb+srv://brandShop:uCrXXy8bZBVdeCYx@cluster0.hktnvnf.mongodb.net/?retryWrites=true&w=majority";
 
@@ -31,19 +31,26 @@ async function run() {
     const brandsCollection = database.collection("brands");
     const productsCollection = database.collection("products");
 
-
     app.get("/brands", async (req, res) => {
       const brands = brandsCollection.find();
       const result = await brands.toArray();
       res.send(result);
     });
 
-   app.get("/products/:name", async (req, res) => {
-     const name = req.params.name.replace(" ", "-");
-     const cursor = productsCollection.find({ brand: name });
-     const result = await cursor.toArray();
-     res.send(result);
-   });
+    app.get("/products/:name", async (req, res) => {
+      const name = req.params.name.replace(" ", "-");
+      const cursor = productsCollection.find({ brand: name });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/products/details/:id", async (req, res) => {
+      const id = req.params.id;
+      const cursor = await productsCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      res.send(cursor);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
