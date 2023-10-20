@@ -38,6 +38,15 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/brands/:name", async (req, res) => {
+      const name = req.params.name;
+      const query = {
+        brand_name: name,
+      };
+      const result = await brandsCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get("/products/:name", async (req, res) => {
       const name = req.params.name.replace(" ", "-");
       const cursor = productsCollection.find({ brand: name });
@@ -89,9 +98,22 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/curt/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await curtCollection.findOne({ email: email });
+      res.send(result);
+    });
+
     app.get("/curt", async (req, res) => {
       const cursor = curtCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.delete("/curt/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: id };
+      const result = await curtCollection.deleteOne(query);
       res.send(result);
     });
 
